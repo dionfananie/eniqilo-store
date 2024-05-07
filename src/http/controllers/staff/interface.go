@@ -21,8 +21,8 @@ type ErrorResponse struct {
 }
 
 type iV1User interface {
-	Register(c *gin.Context)
-	Login(c *gin.Context)
+	StaffRegister(c *gin.Context)
+	StaffLogin(c *gin.Context)
 }
 
 func New(v1User *V1User) iV1User {

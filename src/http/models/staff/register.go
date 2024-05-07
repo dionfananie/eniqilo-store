@@ -1,4 +1,4 @@
-package user
+package staff
 
 type RegisterRequest struct {
 	Name        string `json:"name" binding:"required,min=5,max=50"`

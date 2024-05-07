@@ -20,6 +20,6 @@ func (i *Http) Launch() {
 	})
 	v1.MountStaff()
 	v1.MountCustomer()
-
+	v1.MountProduct()
 	r.Run(":8080")
 }

@@ -11,7 +11,7 @@ const (
 	BEVERAGES   string = "Beverages"
 )
 
-func ValidateRace(status string) error {
+func ValidateCategory(status string) error {
 	switch status {
 	case ACCESSORIES,
 		CLOTHING,

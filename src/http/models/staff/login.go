@@ -1,4 +1,4 @@
-package user
+package staff
 
 type LoginRequest struct {
 	PhoneNumber string `json:"phoneNumber" binding:"required,min=10,max=16"`

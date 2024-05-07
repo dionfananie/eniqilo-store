@@ -11,6 +11,7 @@ func (i *V1Routes) MountCustomer() {
 		DB: i.DB,
 	})
 
-	g.POST("/register", customerController.Register)
+	g.POST("/register", customerController.CustomerRegister)
+	g.GET("/", customerController.CustomerList)
 
 }

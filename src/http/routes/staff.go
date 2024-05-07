@@ -11,7 +11,7 @@ func (i *V1Routes) MountStaff() {
 		DB: i.DB,
 	})
 
-	g.POST("/register", staffController.Register)
-	g.GET("/login", staffController.Login)
+	g.POST("/register", staffController.StaffRegister)
+	g.GET("/login", staffController.StaffLogin)
 
 }

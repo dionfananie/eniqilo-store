@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"eniqilo-store/src/http/helpers/jwt"
+	"eniqilo-store/src/helpers/jwt"
 	"net/http"
 	"strings"
 

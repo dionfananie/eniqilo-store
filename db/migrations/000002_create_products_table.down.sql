@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS products (
     price INT NOT NULL,
     stock INT NOT NULL,
     location VARCHAR(200) NOT NULL,
-    isAvailable BOOLEAN NOT NULL DEFAULT false,
+    is_available BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

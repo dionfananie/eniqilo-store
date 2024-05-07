@@ -1,4 +1,4 @@
-package customerController
+package productController
 
 import (
 	"database/sql"
@@ -21,8 +21,12 @@ type ErrorResponse struct {
 }
 
 type iV1User interface {
-	CustomerList(c *gin.Context)
-	CustomerRegister(c *gin.Context)
+	ProductRegister(c *gin.Context)
+	ProductList(c *gin.Context)
+	ProductListCustomer(c *gin.Context)
+	ProductCheckout(c *gin.Context)
+	ProductEdit(c *gin.Context)
+	ProductDelete(c *gin.Context)
 }
 
 func New(v1User *V1User) iV1User {

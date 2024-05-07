@@ -5,13 +5,13 @@ import (
 
 	"eniqilo-store/src/helpers/jwt"
 	"eniqilo-store/src/helpers/password"
-	"eniqilo-store/src/http/models/user"
+	"eniqilo-store/src/http/models/staff"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (dbase *V1User) Login(c *gin.Context) {
-	var req user.LoginRequest
+func (dbase *V1User) StaffLogin(c *gin.Context) {
+	var req staff.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 
