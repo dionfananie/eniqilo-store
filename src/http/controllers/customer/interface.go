@@ -1,4 +1,4 @@
-package v1controller
+package customerController
 
 import (
 	"database/sql"
@@ -21,8 +21,8 @@ type ErrorResponse struct {
 }
 
 type iV1User interface {
-	Register(c gin.Context) error
-	Login(c gin.Context) error
+	Register(c *gin.Context)
+	Login(c *gin.Context)
 }
 
 func New(v1User *V1User) iV1User {

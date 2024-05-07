@@ -18,10 +18,8 @@ func (i *Http) Launch() {
 		Gin: r.Group(basePath),
 		DB:  i.DB,
 	})
-	v1.MountUser()
-	// router := r.Group("/v1")
-	// router.POST("/user/login", controller.Login)
-	// router.POST("/user/register", controller.Register)
+	v1.MountStaff()
+	v1.MountCustomer()
 
 	r.Run(":8080")
 }

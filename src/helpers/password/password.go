@@ -1,4 +1,4 @@
-package helpers
+package password
 
 import "golang.org/x/crypto/bcrypt"
 
@@ -12,6 +12,6 @@ func Hash(raw string) string {
 	return string(hash)
 }
 
-func VerifyPassword(hash string, raw string) error {
+func Verify(hash string, raw string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(raw))
 }

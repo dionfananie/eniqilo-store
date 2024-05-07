@@ -1,4 +1,4 @@
-package helpers
+package jwt
 
 import (
 	"eniqilo-store/src/config"
@@ -10,7 +10,7 @@ import (
 )
 
 type TokenPayload struct {
-	UserId uint64
+	UserId string
 }
 
 func Generate(payload *TokenPayload) string {
@@ -57,12 +57,12 @@ func Verify(token string) (*TokenPayload, error) {
 		return nil, err
 	}
 
-	id, ok := claims["userId"].(float64)
+	id, ok := claims["userId"].(string)
 	if !ok {
 		return nil, errors.New("something went wrong")
 	}
 
 	return &TokenPayload{
-		UserId: uint64(id),
+		UserId: id,
 	}, nil
 }
