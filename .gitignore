@@ -1,0 +1,7 @@
+.idea
+.env*
+scp/*
+projectsprint.key
+main*
+main_*
+w1key*
