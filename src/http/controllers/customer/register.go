@@ -3,7 +3,6 @@ package customerController
 import (
 	"net/http"
 
-	"eniqilo-store/src/helpers/jwt"
 	"eniqilo-store/src/helpers/password"
 	customerModel "eniqilo-store/src/http/models/customer"
 
@@ -42,16 +41,10 @@ func (dbase *V1Customer) CustomerRegister(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	accessToken := jwt.Generate(&jwt.TokenPayload{
-		UserId: UserId,
-	})
-
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully", "data": gin.H{
 		"userId":      UserId,
 		"phoneNumber": req.PhoneNumber,
 		"name":        req.Name,
-		"accessToken": accessToken,
 	}})
 
 }
