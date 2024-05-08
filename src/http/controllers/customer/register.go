@@ -5,14 +5,14 @@ import (
 
 	"eniqilo-store/src/helpers/jwt"
 	"eniqilo-store/src/helpers/password"
-	"eniqilo-store/src/http/models/customer"
+	customerModel "eniqilo-store/src/http/models/customer"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
-func (dbase *V1User) CustomerRegister(c *gin.Context) {
-	var req customer.RegisterRequest
+func (dbase *V1Customer) CustomerRegister(c *gin.Context) {
+	var req customerModel.CustomerRegister
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

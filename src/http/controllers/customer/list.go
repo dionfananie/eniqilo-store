@@ -10,7 +10,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func (dbase *V1User) CustomerList(c *gin.Context) {
+func (dbase *V1Customer) CustomerList(c *gin.Context) {
 	baseQuery := "SELECT name, race, sex, ageInMonth from customers WHERE TRUE"
 	var params []interface{}
 	var conditions []string
@@ -42,10 +42,10 @@ func (dbase *V1User) CustomerList(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	customers := make([]customerModel.ListCustomer, 0)
+	customers := make([]customerModel.CustomerList, 0)
 
 	for rows.Next() {
-		var customerItem customerModel.ListCustomer
+		var customerItem customerModel.CustomerList
 		if err := rows.Scan(&customerItem.Name, &customerItem.PhoneNumber, &customerItem.Id); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
