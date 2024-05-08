@@ -11,7 +11,7 @@ import (
 )
 
 func (dbase *V1Customer) CustomerList(c *gin.Context) {
-	baseQuery := "SELECT name, race, sex, ageInMonth from customers WHERE TRUE"
+	baseQuery := "SELECT id, name, phoneNumber from customers WHERE TRUE"
 	var params []interface{}
 	var conditions []string
 

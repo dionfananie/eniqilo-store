@@ -34,7 +34,7 @@ func (dbase *V1Staff) StaffRegister(c *gin.Context) {
 	}
 
 	var UserId string
-	err = dbase.DB.QueryRow("INSERT INTO users (name, phone_number, password) VALUES ($1, $2, $3) RETURNING id", req.Name, req.PhoneNumber, hashedPassword).Scan(&UserId)
+	err = dbase.DB.QueryRow("INSERT INTO staffs (name, phone_number, password) VALUES ($1, $2, $3) RETURNING id", req.Name, req.PhoneNumber, hashedPassword).Scan(&UserId)
 	if err != nil {
 		if err, ok := err.(*pq.Error); ok {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Detail})
