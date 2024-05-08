@@ -11,7 +11,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func (dbase *V1User) StaffRegister(c *gin.Context) {
+func (dbase *V1Staff) StaffRegister(c *gin.Context) {
 	var req staff.RegisterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {

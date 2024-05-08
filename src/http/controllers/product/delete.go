@@ -8,7 +8,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func (dbase *V1User) ProductDelete(c *gin.Context) {
+func (dbase *V1Product) ProductDelete(c *gin.Context) {
 	id := c.Param("id")
 
 	rows, err := dbase.DB.Exec("DELETE FROM products WHERE id = $1", id)

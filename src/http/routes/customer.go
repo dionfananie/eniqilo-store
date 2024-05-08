@@ -8,7 +8,7 @@ import (
 func (i *V1Routes) MountCustomer() {
 	g := i.Gin.Group("/customer")
 
-	customerController := customerController.New(&customerController.V1User{
+	customerController := customerController.New(&customerController.V1Customer{
 		DB: i.DB,
 	})
 	g.Use(middleware.AuthMiddleware())

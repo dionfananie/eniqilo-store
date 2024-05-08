@@ -8,7 +8,7 @@ import (
 func (i *V1Routes) MountProduct() {
 	g := i.Gin.Group("/product")
 
-	productController := productController.New(&productController.V1User{
+	productController := productController.New(&productController.V1Product{
 		DB: i.DB,
 	})
 	g.GET("/customer", productController.ProductListCustomer)

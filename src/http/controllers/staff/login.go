@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (dbase *V1User) StaffLogin(c *gin.Context) {
+func (dbase *V1Staff) StaffLogin(c *gin.Context) {
 	var req staff.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {

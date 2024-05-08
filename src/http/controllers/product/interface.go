@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type V1User struct {
+type V1Product struct {
 	DB *sql.DB
 }
 
@@ -29,6 +29,6 @@ type iV1User interface {
 	ProductDelete(c *gin.Context)
 }
 
-func New(v1User *V1User) iV1User {
-	return v1User
+func New(v1Product *V1Product) iV1User {
+	return v1Product
 }
