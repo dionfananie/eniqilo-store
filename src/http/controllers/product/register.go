@@ -11,7 +11,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func (dbase *V1User) ProductRegister(c *gin.Context) {
+func (dbase *V1Product) ProductRegister(c *gin.Context) {
 	var req product.ProductRegister
 
 	if err := c.ShouldBindJSON(&req); err != nil {

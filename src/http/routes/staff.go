@@ -7,7 +7,7 @@ import (
 func (i *V1Routes) MountStaff() {
 	g := i.Gin.Group("/staff")
 
-	staffController := staffController.New(&staffController.V1User{
+	staffController := staffController.New(&staffController.V1Staff{
 		DB: i.DB,
 	})
 

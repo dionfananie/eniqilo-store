@@ -8,13 +8,16 @@ import (
 func (i *V1Routes) MountProduct() {
 	g := i.Gin.Group("/product")
 
-	productController := productController.New(&productController.V1User{
+	productController := productController.New(&productController.V1Product{
 		DB: i.DB,
 	})
+	g.GET("/customer", productController.ProductListCustomer)
+
 	g.Use(middleware.AuthMiddleware())
 	g.POST("/", productController.ProductRegister)
 	g.GET("/", productController.ProductList)
-	g.GET("/customer", productController.ProductListCustomer)
+	g.PUT("/:id", productController.ProductEdit)
+	g.DELETE("/:id", productController.ProductDelete)
 	g.GET("/checkout", productController.ProductCheckout)
 
 }
