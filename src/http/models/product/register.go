@@ -1,6 +1,6 @@
 package product
 
-type ProductRegister struct {
+type ProductRegisterModel struct {
 	Name        string `json:"name" binding:"required,min=1,max=50"`
 	Sku         string `json:"sku" binding:"required,min=1,max=30"`
 	Category    string `json:"category" binding:"required"`
@@ -9,5 +9,5 @@ type ProductRegister struct {
 	Price       int64  `json:"price" binding:"required"`
 	Stock       int64  `json:"stock" binding:"required"`
 	Location    string `json:"location" binding:"required,min=1,max=200"`
-	IsAvailable string `json:"isAvailable" binding:"required"`
+	IsAvailable bool   `json:"isAvailable" binding:"required"`
 }

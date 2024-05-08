@@ -12,7 +12,7 @@ import (
 )
 
 func (dbase *V1Product) ProductRegister(c *gin.Context) {
-	var req product.ProductRegister
+	var req product.ProductRegisterModel
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -35,7 +35,6 @@ func (dbase *V1Product) ProductRegister(c *gin.Context) {
 		}
 
 	}
-
 	err := dbase.DB.QueryRow("INSERT INTO products (name, sku, category, image_url, notes, price, stock, location, is_available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, created_at", req.Name, req.Sku, req.Category, req.ImageUrl, req.Notes, req.Price, req.Stock, req.Location, isAvailable).Scan(&ProductId, &CreatedAt)
 
 	if err != nil {

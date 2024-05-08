@@ -41,6 +41,7 @@ require (
 	golang.org/x/tools/gopls v0.15.3 // indirect
 	golang.org/x/vuln v1.0.1 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
+	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.4.6 // indirect
 	mvdan.cc/gofumpt v0.6.0 // indirect
