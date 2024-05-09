@@ -18,11 +18,6 @@ func (dbase *V1Customer) CustomerRegister(c *gin.Context) {
 		return
 	}
 
-	if _, err := regexp.MatchString("^\\+[1-9]{1}[0-9]{3,14}$", req.PhoneNumber); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	var phoneExist bool
 	err := dbase.DB.QueryRow("SELECT EXISTS(SELECT 1 from customers WHERE phone_number = $1)", req.PhoneNumber).Scan(&phoneExist)
 	if err != nil {
@@ -32,6 +27,11 @@ func (dbase *V1Customer) CustomerRegister(c *gin.Context) {
 
 	if phoneExist {
 		c.JSON(http.StatusConflict, gin.H{"error": "Phone Number already exists"})
+		return
+	}
+
+	if match, _ := regexp.MatchString("^\\+[1-9]{1}[0-9]{3,14}$", req.PhoneNumber); !match {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone Number must contains country code"})
 		return
 	}
 
