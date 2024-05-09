@@ -23,7 +23,6 @@ type ErrorResponse struct {
 type iV1User interface {
 	ProductRegister(c *gin.Context)
 	ProductList(c *gin.Context)
-	ProductListCustomer(c *gin.Context)
 	ProductCheckout(c *gin.Context)
 	ProductEdit(c *gin.Context)
 	ProductDelete(c *gin.Context)
