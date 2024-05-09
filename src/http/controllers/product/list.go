@@ -16,7 +16,9 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 	var conditions, conditionOrders []string
 	var limitQuery, offsetQuery, orderByQuery string
 
-	if id := c.Query("id"); id != "" {
+	isCustomer := strings.Contains(c.FullPath(), "/customer")
+
+	if id := c.Query("id"); id != "" && !isCustomer {
 		conditions = append(conditions, fmt.Sprintf("id = $%d", len(params)+1))
 		params = append(params, id)
 	}
@@ -27,7 +29,11 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 	}
 
 	if isAvailable := c.Query("isAvailable"); isAvailable != "" {
-		conditions = append(conditions, fmt.Sprintf("is_available = $%d", len(params)+1))
+		availableQuery := fmt.Sprintf("is_available = $%d", len(params)+1)
+		if isCustomer {
+			availableQuery = "is_available = true"
+		}
+		conditions = append(conditions, availableQuery)
 		params = append(params, isAvailable)
 	}
 	if category := c.Query("category"); category != "" {
@@ -35,16 +41,20 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		params = append(params, category)
 	}
 	if sku := c.Query("sku"); sku != "" {
-		println("len", len(params))
 		conditions = append(conditions, fmt.Sprintf("sku = $%d", len(params)+1))
 		params = append(params, sku)
 	}
 
-	if stock := c.Query("stock"); stock != "" {
-		conditions = append(conditions, fmt.Sprintf("stock = $%d", len(params)+1))
-		params = append(params, stock)
+	if stock := c.Query("inStock"); stock != "" {
+		stockValue := "= 0"
+
+		if stock == "true" || isCustomer {
+			stockValue = "> 0"
+		}
+		conditions = append(conditions, fmt.Sprintf("stock %s", stockValue))
 	}
-	if location := c.Query("location"); location != "" {
+
+	if location := c.Query("location"); location != "" && !isCustomer {
 		conditions = append(conditions, fmt.Sprintf("location = $%d", len(params)+1))
 		params = append(params, location)
 	}
@@ -66,10 +76,8 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		}
 		conditionOrders = append(conditionOrders, fmt.Sprintf("price %s", price))
 
-	} else {
-		conditionOrders = append(conditionOrders, "price")
 	}
-	if createdAt := c.Query("created_at"); createdAt != "" {
+	if createdAt := c.Query("created_at"); createdAt != "" && !isCustomer {
 		if createdAt == "desc" {
 			createdAt = "DESC"
 		} else {
@@ -77,8 +85,6 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		}
 		conditionOrders = append(conditionOrders, fmt.Sprintf("created_at %s", createdAt))
 
-	} else {
-		conditionOrders = append(conditionOrders, "created_at")
 	}
 
 	if len(conditionOrders) > 0 {
@@ -101,8 +107,6 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		baseQuery += " " + orderByQuery
 	}
 
-	println(baseQuery)
-	println(params)
 	rows, err := dbase.DB.Query(baseQuery, params...)
 
 	if err != nil {

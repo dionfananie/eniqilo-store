@@ -11,7 +11,7 @@ func (i *V1Routes) MountProduct() {
 	productController := productController.New(&productController.V1Product{
 		DB: i.DB,
 	})
-	g.GET("/customer", productController.ProductListCustomer)
+	g.GET("/customer", productController.ProductList)
 
 	g.Use(middleware.AuthMiddleware())
 	g.POST("/", productController.ProductRegister)
