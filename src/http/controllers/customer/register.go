@@ -2,6 +2,7 @@ package customerController
 
 import (
 	"net/http"
+	"regexp"
 
 	customerModel "eniqilo-store/src/http/models/customer"
 
@@ -13,6 +14,11 @@ func (dbase *V1Customer) CustomerRegister(c *gin.Context) {
 	var req customerModel.CustomerRegister
 
 	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if _, err := regexp.MatchString("^\\+[1-9]{1}[0-9]{3,14}$", req.PhoneNumber); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

@@ -2,6 +2,7 @@ package staffController
 
 import (
 	"net/http"
+	"regexp"
 
 	"eniqilo-store/src/helpers/jwt"
 	"eniqilo-store/src/helpers/password"
@@ -30,6 +31,11 @@ func (dbase *V1Staff) StaffRegister(c *gin.Context) {
 
 	if phoneExist {
 		c.JSON(http.StatusConflict, gin.H{"error": "Phone Number already exists"})
+		return
+	}
+
+	if _, err := regexp.MatchString("^\\+[1-9]{1}[0-9]{3,14}$", req.PhoneNumber); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
