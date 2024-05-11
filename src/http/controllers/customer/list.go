@@ -46,7 +46,7 @@ func (dbase *V1Customer) CustomerList(c *gin.Context) {
 
 	for rows.Next() {
 		var customerItem customerModel.CustomerList
-		if err := rows.Scan(&customerItem.Name, &customerItem.PhoneNumber, &customerItem.Id); err != nil {
+		if err := rows.Scan(&customerItem.Id, &customerItem.Name, &customerItem.PhoneNumber); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
