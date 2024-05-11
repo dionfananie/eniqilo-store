@@ -21,8 +21,8 @@ func (dbase *V1Customer) CustomerList(c *gin.Context) {
 	}
 
 	if name := c.Query("name"); name != "" {
-		conditions = append(conditions, fmt.Sprintf("id = $%d", len(params)+1))
-		params = append(params, name)
+		conditions = append(conditions, fmt.Sprintf("name LIKE $%d", len(params)+1))
+		params = append(params, "%"+name+"%")
 	}
 
 	if len(conditions) > 0 {
