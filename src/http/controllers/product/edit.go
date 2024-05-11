@@ -9,13 +9,19 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
 func (dbase *V1Product) ProductEdit(c *gin.Context) {
 	id := c.Param("id")
+	_, err := uuid.Parse(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Error Id Product"})
+		return
+	}
 
-	var req product.ProductEditModel
+	var req product.ProductRegisterModel
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -54,9 +60,8 @@ func (dbase *V1Product) ProductEdit(c *gin.Context) {
 	}
 	if req.ImageUrl != "" {
 		re := regexp.MustCompile(`[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)`)
-		regExt := regexp.MustCompile(`(\.png|gif|jpeg|jpg*)$`)
-		println("match: ", regExt.MatchString(req.ImageUrl))
-		if !re.MatchString(req.ImageUrl) || regExt.MatchString(req.ImageUrl) {
+
+		if !re.MatchString(req.ImageUrl) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Image Url is not valid"})
 			return
 		}
@@ -84,16 +89,9 @@ func (dbase *V1Product) ProductEdit(c *gin.Context) {
 		params = append(params, req.Location)
 	}
 
-	if req.IsAvailable {
-		conditions = append(conditions, fmt.Sprintf("is_available = $%d", len(params)+1))
-		params = append(params, req.IsAvailable)
-	}
+	conditions = append(conditions, fmt.Sprintf("is_available = $%d", len(params)+1))
+	params = append(params, req.IsAvailable)
 
-	// validate := validator.New()
-	// if err := validate.Struct(req); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "isAvailable must boolean"})
-	// 	return
-	// }
 	if len(conditions) > 0 {
 		baseQuery = baseQuery + strings.Join(conditions, ", ")
 	}
