@@ -4,9 +4,11 @@ import (
 	"eniqilo-store/src/http/models/product"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 )
 
 func (dbase *V1Product) ProductTransactions(c *gin.Context) {
@@ -86,6 +88,60 @@ func (dbase *V1Product) ProductTransactions(c *gin.Context) {
 		return
 	}
 
+	transactionIds := make([]string, 0, len(transactions))
+	for _, trx := range transactions {
+		transactionIds = append(transactionIds, trx.TransactionId)
+	}
+
+	itemRows, err := dbase.DB.Query("SELECT id, transaction_id, product_id, quantity FROM transaction_items WHERE transaction_id = ANY($1)", pq.Array(transactionIds))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	defer itemRows.Close()
+
+	var transactionItems = make([]product.ProductTransactionItemModel, 0, 5)
+	for itemRows.Next() {
+
+		var item product.ProductTransactionItemModel
+		if err := itemRows.Scan(&item.Id,
+			&item.TransactionId,
+			&item.ProductId,
+			&item.Quantity); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		transactionItems = append(transactionItems, item)
+	}
+
+	transactionItemsMap := make(map[string][]product.ProductTransactionItemModel)
+	for _, item := range transactionItems {
+		transactionItemsMap[item.TransactionId] = append(transactionItemsMap[item.TransactionId], item)
+	}
+
+	for i, transaction := range transactions {
+		items, ok := transactionItemsMap[transaction.TransactionId]
+		if !ok {
+			continue
+		}
+
+		for _, item := range items {
+			quantity, err := strconv.Atoi(item.Quantity)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			detail := product.ProductCheckoutDetail{
+				ProductId: item.ProductId,
+				Quantity:  quantity,
+			}
+			transactions[i].ProductDetails = append(transactions[i].ProductDetails, detail)
+
+		}
+	}
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": transactions})
 
 }
