@@ -33,12 +33,12 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		productIds[i] = detail.ProductId
 	}
 
-	//ERROR :  "error": "sql: converting argument $1 type: unsupported type []string, a slice of string"
 	rows, err := dbase.DB.Query("SELECT id, name, is_available, category, sku, price, stock, image_url, location, created_at from products WHERE id = ANY($1)", pq.Array(productIds))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	defer rows.Close()
 
 	countRows := 0
 	products := make([]product.ProductListModel, 0, len(productIds))
@@ -123,6 +123,6 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "successfully add product", "data": gin.H{}})
+	c.JSON(http.StatusCreated, gin.H{"message": "product checkout success"})
 
 }
