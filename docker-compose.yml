@@ -17,15 +17,7 @@ services:
     ports:
       - 8080:8080
     image: dionfananie/eniqilo-store:1.0
-    environment:
-      DB_NAME: eniqilodb
-      DB_USERNAME: dionfananie
-      DB_PASSWORD: yoloyolo
-      DB_HOST: host.docker.internal
-      DB_PORT: 5432
-      JWT_SECRET: zay1kkxK6l7Z/4ldpltMawLBmIYyyio+CRrhRLzk8HijZS114h8gw6MX5Udi2X3ZP+B9B9aFWdTdGl83DbC6tqflT+bR+laM5X9QNacTXzNlmZZtbxGM3PKkdOe7KSuR4BgdNiGig5aLFQykZfZLpWuoGXTfhwmIIgNeR5fVN6MGkz9Zr5GAdVRv5kIzgoY875ZYsyR85EEMyABwAfpc69K4dGTg==
-      JWT_EXP: 8h
-      BCRYPT_SALT: 8
+    env_file: .env.docker
     restart: always
     volumes:
       - api_volume:/usr/src/app/
