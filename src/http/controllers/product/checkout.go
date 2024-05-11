@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 )
 
 func (dbase *V1Product) ProductCheckout(c *gin.Context) {
@@ -17,7 +18,7 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 	}
 
 	var customerIdExist bool
-	err := dbase.DB.QueryRow("SELECT EXIST(SELECT 1 from customers WHERE id = $1)", customerIdExist).Scan(&customerIdExist)
+	err := dbase.DB.QueryRow("SELECT EXISTS(SELECT 1 from customers WHERE id = $1)", req.CustomerId).Scan(&customerIdExist)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -32,13 +33,15 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		productIds[i] = detail.ProductId
 	}
 
-	rows, err := dbase.DB.Query("SELECT id, name, is_available, category, sku, price, stock, image_url, location, created_at from products WHERE id = ANY($1)", productIds)
+	//ERROR :  "error": "sql: converting argument $1 type: unsupported type []string, a slice of string"
+	rows, err := dbase.DB.Query("SELECT id, name, is_available, category, sku, price, stock, image_url, location, created_at from products WHERE id = ANY($1)", pq.Array(productIds))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
 	countRows := 0
-	products := make([]product.ProductListModel, len(productIds))
+	products := make([]product.ProductListModel, 0, len(productIds))
 	for rows.Next() {
 		var productItem product.ProductListModel
 		countRows++
@@ -72,7 +75,7 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "One of the product id is not found"})
 	}
 
-	productStockChanges := make([]product.ProductStockChangesModel, len(productIds))
+	productStockChanges := make([]product.ProductStockChangesModel, 0, len(productIds))
 	for _, productItem := range products {
 		var quantity int
 		for _, detail := range req.ProductDetails {
@@ -101,18 +104,23 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 	}
 
 	var transactionId string
-	err = dbase.DB.QueryRow("INSERT INTO transactions (customer_id, paid, change) VALUES ($1, $2) RETURNING id", req.CustomerId, req.Paid, req.Change).Scan(&transactionId)
+	err = dbase.DB.QueryRow("INSERT INTO transactions (customer_id, paid, change) VALUES ($1, $2, $3) RETURNING id", req.CustomerId, req.Paid, req.Change).Scan(&transactionId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
 	baseQuery := "INSERT INTO transaction_items (transaction_id, product_id, quantity) VALUES "
-
 	for i, item := range req.ProductDetails {
 		if i > 0 {
 			baseQuery += ", "
 		}
 		baseQuery += fmt.Sprintf("('%s', '%s', %d)", transactionId, item.ProductId, item.Quantity)
+	}
+	err = dbase.DB.QueryRow(baseQuery).Err()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "successfully add product", "data": gin.H{}})
