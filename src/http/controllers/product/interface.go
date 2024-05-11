@@ -24,6 +24,7 @@ type iV1User interface {
 	ProductRegister(c *gin.Context)
 	ProductList(c *gin.Context)
 	ProductCheckout(c *gin.Context)
+	ProductTransactions(c *gin.Context)
 	ProductEdit(c *gin.Context)
 	ProductDelete(c *gin.Context)
 }

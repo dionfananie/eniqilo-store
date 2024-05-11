@@ -18,6 +18,7 @@ func (i *V1Routes) MountProduct() {
 	g.GET("/", productController.ProductList)
 	g.PUT("/:id", productController.ProductEdit)
 	g.DELETE("/:id", productController.ProductDelete)
+	g.GET("/checkout/history", productController.ProductTransactions)
 	g.POST("/checkout", productController.ProductCheckout)
 
 }
