@@ -9,5 +9,5 @@ type ProductRegisterModel struct {
 	Price       int64  `json:"price" binding:"required"`
 	Stock       int64  `json:"stock" binding:"required,min=1"`
 	Location    string `json:"location" binding:"required,min=1,max=200"`
-	IsAvailable bool   `json:"isAvailable" binding:"required"`
+	IsAvailable bool   `json:"isAvailable"`
 }
