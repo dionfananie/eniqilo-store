@@ -115,6 +115,10 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Paid not enough"})
 		return
 	}
+	if req.Change != req.Paid-productTotalPrice {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Change is wrong"})
+		return
+	}
 
 	for _, productChange := range productStockChanges {
 		_, err := dbase.DB.Exec("UPDATE products SET stock = $1 WHERE id = $2", productChange.FinalStock, productChange.Id)
