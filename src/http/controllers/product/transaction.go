@@ -25,6 +25,8 @@ func (dbase *V1Product) ProductTransactions(c *gin.Context) {
 	if limit := c.Query("limit"); limit != "" {
 		limitQuery = fmt.Sprintf("LIMIT $%d", len(params)+1)
 		params = append(params, limit)
+	} else {
+		limitQuery = "LIMIT 5"
 	}
 
 	if offset := c.Query("offset"); offset != "" {
@@ -32,13 +34,16 @@ func (dbase *V1Product) ProductTransactions(c *gin.Context) {
 		params = append(params, offset)
 	}
 
-	if createdAt := c.Query("created_at"); createdAt != "" {
+	if createdAt := c.Query("createdAt"); createdAt != "" {
 		if createdAt == "desc" {
 			createdAt = "DESC"
 		} else {
 			createdAt = "ASC"
 		}
 		conditionOrders = append(conditionOrders, fmt.Sprintf("created_at %s", createdAt))
+	} else {
+		conditionOrders = append(conditionOrders, "created_at DESC")
+
 	}
 
 	if len(conditionOrders) > 0 {
@@ -49,6 +54,10 @@ func (dbase *V1Product) ProductTransactions(c *gin.Context) {
 		baseQuery += " AND " + strings.Join(conditions, " AND ")
 	}
 
+	if orderByQuery != "" {
+		baseQuery += " " + orderByQuery
+	}
+
 	if limitQuery != "" {
 		baseQuery += " " + limitQuery
 	}
@@ -56,11 +65,7 @@ func (dbase *V1Product) ProductTransactions(c *gin.Context) {
 	if offsetQuery != "" {
 		baseQuery += " " + offsetQuery
 	}
-
-	if orderByQuery != "" {
-		baseQuery += " " + orderByQuery
-	}
-
+	println("baseQuery ", baseQuery)
 	rows, err := dbase.DB.Query(baseQuery, params...)
 
 	if err != nil {
