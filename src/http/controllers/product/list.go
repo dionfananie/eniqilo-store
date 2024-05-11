@@ -32,9 +32,10 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		availableQuery := fmt.Sprintf("is_available = $%d", len(params)+1)
 		if isCustomer {
 			availableQuery = "is_available = true"
+		} else {
+			conditions = append(conditions, availableQuery)
+			params = append(params, isAvailable)
 		}
-		conditions = append(conditions, availableQuery)
-		params = append(params, isAvailable)
 	}
 	if category := c.Query("category"); category != "" {
 		conditions = append(conditions, fmt.Sprintf("category = $%d", len(params)+1))
@@ -62,7 +63,11 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 	if limit := c.Query("limit"); limit != "" {
 		limitQuery = fmt.Sprintf("LIMIT $%d", len(params)+1)
 		params = append(params, limit)
+	} else {
+		limitQuery = fmt.Sprintf("LIMIT $%d", len(params)+1)
+		params = append(params, 5)
 	}
+
 	if offset := c.Query("offset"); offset != "" {
 		offsetQuery = fmt.Sprintf("OFFSET $%d", len(params)+1)
 		params = append(params, offset)
@@ -75,16 +80,18 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 			price = "ASC"
 		}
 		conditionOrders = append(conditionOrders, fmt.Sprintf("price %s", price))
-
 	}
-	if createdAt := c.Query("created_at"); createdAt != "" && !isCustomer {
+
+	if createdAt := c.Query("createdAt"); createdAt != "" && !isCustomer {
 		if createdAt == "desc" {
 			createdAt = "DESC"
 		} else {
 			createdAt = "ASC"
 		}
+		fmt.Println(createdAt)
 		conditionOrders = append(conditionOrders, fmt.Sprintf("created_at %s", createdAt))
-
+	} else {
+		conditionOrders = append(conditionOrders, "created_at DESC")
 	}
 
 	if len(conditionOrders) > 0 {
@@ -95,16 +102,16 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		baseQuery += " AND " + strings.Join(conditions, " AND ")
 	}
 
-	if limitQuery != "" {
-		baseQuery += " " + limitQuery
-	}
-
 	if offsetQuery != "" {
 		baseQuery += " " + offsetQuery
 	}
 
 	if orderByQuery != "" {
 		baseQuery += " " + orderByQuery
+	}
+
+	if limitQuery != "" {
+		baseQuery += " " + limitQuery
 	}
 
 	rows, err := dbase.DB.Query(baseQuery, params...)
