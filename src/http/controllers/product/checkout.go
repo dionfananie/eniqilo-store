@@ -46,7 +46,7 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		productIds[i] = detail.ProductId
 	}
 
-	rows, err := dbase.DB.Query("SELECT id, name, is_available, category, sku, price, stock, image_url, location, created_at from products WHERE id = ANY($1)", pq.Array(productIds))
+	rows, err := dbase.DB.Query("SELECT id, name, is_available, category, sku, price, stock, image_url, location, created_at from products WHERE id = ANY($1) AND is_available = true", pq.Array(productIds))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -85,27 +85,35 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 	}
 
 	if countRows != len(productIds) {
-		c.JSON(http.StatusNotFound, gin.H{"message": "One of the product id is not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "One of the product id is not found"})
+		return
 	}
 
 	productStockChanges := make([]product.ProductStockChangesModel, 0, len(productIds))
+	var productTotalPrice int
 	for _, productItem := range products {
 		var quantity int
 		for _, detail := range req.ProductDetails {
 			if detail.ProductId == productItem.Id {
 				quantity = detail.Quantity
+				productTotalPrice = productTotalPrice + int(productItem.Price)*quantity
 				break
 			}
+		}
+
+		if int(productItem.Stock)-quantity < 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "One of the product stock is not enough"})
+			return
 		}
 		productStockChanges = append(productStockChanges, product.ProductStockChangesModel{
 			Id:         productItem.Id,
 			FinalStock: int(productItem.Stock) - quantity,
 		})
 
-		if int(productItem.Stock)-quantity < 0 {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "One of the product stock is not enough"})
-			return
-		}
+	}
+	if req.Paid < productTotalPrice {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Paid not enough"})
+		return
 	}
 
 	for _, productChange := range productStockChanges {
