@@ -2,6 +2,7 @@ package productController
 
 import (
 	"eniqilo-store/src/http/models/product"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -99,7 +100,20 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		}
 	}
 
-	//TODO: SAVE THE CHECKOUT DATA
+	var transactionId string
+	err = dbase.DB.QueryRow("INSERT INTO transactions (customer_id, paid, change) VALUES ($1, $2) RETURNING id", req.CustomerId, req.Paid, req.Change).Scan(&transactionId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	baseQuery := "INSERT INTO transaction_items (transaction_id, product_id, quantity) VALUES "
+
+	for i, item := range req.ProductDetails {
+		if i > 0 {
+			baseQuery += ", "
+		}
+		baseQuery += fmt.Sprintf("('%s', '%s', %d)", transactionId, item.ProductId, item.Quantity)
+	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "successfully add product", "data": gin.H{}})
 
