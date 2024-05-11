@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS products (
-    id uuid DEFAULT gen_random_uuid(),
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(50) NOT NULL,
     sku VARCHAR(30) NOT NULL,
     category VARCHAR(20) NOT NULL, 
