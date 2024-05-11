@@ -104,18 +104,19 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		baseQuery += " AND " + strings.Join(conditions, " AND ")
 	}
 
-	if offsetQuery != "" {
-		baseQuery += " " + offsetQuery
-	}
-
 	if orderByQuery != "" {
 		baseQuery += " " + orderByQuery
+	}
+
+	if offsetQuery != "" {
+		baseQuery += " " + offsetQuery
 	}
 
 	if limitQuery != "" {
 		baseQuery += " " + limitQuery
 	}
 
+	println("baseQuery: ", baseQuery)
 	rows, err := dbase.DB.Query(baseQuery, params...)
 
 	if err != nil {

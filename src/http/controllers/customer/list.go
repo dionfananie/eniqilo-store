@@ -16,7 +16,7 @@ func (dbase *V1Customer) CustomerList(c *gin.Context) {
 	var conditions []string
 
 	if phone := c.Query("phoneNumber"); phone != "" {
-		conditions = append(conditions, fmt.Sprintf("id = $%d", len(params)+1))
+		conditions = append(conditions, fmt.Sprintf("phone_number = $%d", len(params)+1))
 		params = append(params, phone)
 	}
 
