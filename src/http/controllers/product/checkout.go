@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
@@ -17,8 +18,14 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		return
 	}
 
+	_, err := uuid.Parse(req.CustomerId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong customer id"})
+		return
+	}
+
 	var customerIdExist bool
-	err := dbase.DB.QueryRow("SELECT EXISTS(SELECT 1 from customers WHERE id = $1)", req.CustomerId).Scan(&customerIdExist)
+	err = dbase.DB.QueryRow("SELECT EXISTS(SELECT 1 from customers WHERE id = $1)", req.CustomerId).Scan(&customerIdExist)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
