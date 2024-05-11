@@ -14,7 +14,6 @@ func (dbase *V1Staff) StaffLogin(c *gin.Context) {
 	var req staff.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -23,7 +22,6 @@ func (dbase *V1Staff) StaffLogin(c *gin.Context) {
 	var phoneNumber string
 	var Pass string
 	var UserId string
-
 	err := dbase.DB.QueryRow("SELECT id, name, password, phone_number from staffs WHERE phone_number = $1", req.PhoneNumber).Scan(&UserId, &Name, &Pass, &phoneNumber)
 
 	if err != nil {

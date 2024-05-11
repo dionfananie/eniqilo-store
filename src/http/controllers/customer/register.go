@@ -1,6 +1,7 @@
 package customerController
 
 import (
+	"log"
 	"net/http"
 	"regexp"
 
@@ -30,7 +31,9 @@ func (dbase *V1Customer) CustomerRegister(c *gin.Context) {
 		return
 	}
 
-	if match, _ := regexp.MatchString("^\\+[1-9]{1}-?[0-9]{3,14}$", req.PhoneNumber); !match {
+	re := regexp.MustCompile(`^\+(?:[0-9] ?){6,14}[0-9]$`)
+	if !re.MatchString(req.PhoneNumber) {
+		log.Println("Phone number is not valid:", req.PhoneNumber)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone Number must contains country code"})
 		return
 	}
