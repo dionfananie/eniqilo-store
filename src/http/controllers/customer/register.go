@@ -30,7 +30,7 @@ func (dbase *V1Customer) CustomerRegister(c *gin.Context) {
 		return
 	}
 
-	if match, _ := regexp.MatchString("^\\+[1-9]{1}[0-9]{3,14}$", req.PhoneNumber); !match {
+	if match, _ := regexp.MatchString("^\\+[1-9]{1}-?[0-9]{3,14}$", req.PhoneNumber); !match {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone Number must contains country code"})
 		return
 	}
