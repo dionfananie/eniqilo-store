@@ -5,11 +5,18 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
 func (dbase *V1Product) ProductDelete(c *gin.Context) {
 	id := c.Param("id")
+
+	_, err := uuid.Parse(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+		return
+	}
 
 	rows, err := dbase.DB.Exec("DELETE FROM products WHERE id = $1", id)
 
@@ -29,7 +36,7 @@ func (dbase *V1Product) ProductDelete(c *gin.Context) {
 	}
 
 	if rowsAffected == 0 {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Delete Failed"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
 		return
 	}
 
