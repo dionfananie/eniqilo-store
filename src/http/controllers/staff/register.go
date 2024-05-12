@@ -34,7 +34,7 @@ func (dbase *V1Staff) StaffRegister(c *gin.Context) {
 		return
 	}
 
-	re := regexp.MustCompile(`^\+(?:[0-9] ?){6,14}[0-9]$`)
+	re := regexp.MustCompile(`^\+(?:[0-9]-? ?){6,14}[0-9]$`)
 	if !re.MatchString(req.PhoneNumber) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone Number must contains country code"})
 		return
