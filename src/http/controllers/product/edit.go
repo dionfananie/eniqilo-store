@@ -98,7 +98,6 @@ func (dbase *V1Product) ProductEdit(c *gin.Context) {
 	whereQuery := fmt.Sprintf("WHERE id = '%s'", id)
 	baseQuery = baseQuery + " " + whereQuery
 
-	println(baseQuery)
 	res, err := dbase.DB.Exec(baseQuery, params...)
 
 	if err != nil {

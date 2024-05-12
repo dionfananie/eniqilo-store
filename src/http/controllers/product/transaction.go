@@ -65,7 +65,6 @@ func (dbase *V1Product) ProductTransactions(c *gin.Context) {
 	if offsetQuery != "" {
 		baseQuery += " " + offsetQuery
 	}
-	println("baseQuery ", baseQuery)
 	rows, err := dbase.DB.Query(baseQuery, params...)
 
 	if err != nil {
