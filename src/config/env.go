@@ -5,11 +5,9 @@ import (
 	"log"
 	"os"
 	"strconv"
-
-	"github.com/joho/godotenv"
 )
 
-var isEnvLoaded = false
+// var isEnvLoaded = false
 
 var (
 	DB_NAME     = getEnv("DB_NAME", "")
@@ -24,19 +22,19 @@ var (
 	BCRYPT_SALT = getEnvAsInt("BCRYPT_SALT", 8)
 )
 
-func loadEnv() {
-	if !isEnvLoaded {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatal("Error loading .env file")
-		}
-		isEnvLoaded = true
-	}
-}
+// func loadEnv() {
+// 	if !isEnvLoaded {
+// 		err := godotenv.Load()
+// 		if err != nil {
+// 			log.Fatal("Error loading .env file")
+// 		}
+// 		isEnvLoaded = true
+// 	}
+// }
 
 func getEnv(name string, fallback string) string {
-	loadEnv()
-	if value, exists := os.LookupEnv(name); exists {
+	// loadEnv()
+	if value := os.Getenv(name); value != "" {
 		return value
 	}
 
@@ -48,8 +46,8 @@ func getEnv(name string, fallback string) string {
 }
 
 func getEnvAsInt(name string, fallback int) int {
-	loadEnv()
-	if value, exists := os.LookupEnv(name); exists {
+	// loadEnv()
+	if value := os.Getenv(name); value != "" {
 		intValue, err := strconv.Atoi(value)
 		if err != nil {
 			log.Fatalf("Error converting %v to int", name)
