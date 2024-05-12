@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 )
 
 var isEnvLoaded = false
@@ -25,10 +25,19 @@ var (
 )
 
 func loadEnv() {
+	// if !isEnvLoaded {
+	// 	viper.AutomaticEnv()
+	// 	isEnvLoaded = true
+	// }
+
 	if !isEnvLoaded {
-		viper.AutomaticEnv()
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 		isEnvLoaded = true
 	}
+
 }
 
 func getEnv(name string, fallback string) string {
