@@ -91,7 +91,6 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		} else {
 			createdAt = "ASC"
 		}
-		fmt.Println(createdAt)
 		conditionOrders = append(conditionOrders, fmt.Sprintf("created_at %s", createdAt))
 	} else {
 		conditionOrders = append(conditionOrders, "created_at DESC")
@@ -117,7 +116,6 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		baseQuery += " " + limitQuery
 	}
 
-	println("baseQuery: ", baseQuery)
 	rows, err := dbase.DB.Query(baseQuery, params...)
 
 	if err != nil {
