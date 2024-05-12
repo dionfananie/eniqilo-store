@@ -32,10 +32,12 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		availableQuery := fmt.Sprintf("is_available = $%d", len(params)+1)
 		if isCustomer {
 			availableQuery = "is_available = true"
+			params = append(params, true)
 		} else {
-			conditions = append(conditions, availableQuery)
 			params = append(params, isAvailable)
 		}
+		conditions = append(conditions, availableQuery)
+
 	}
 	if category := c.Query("category"); category != "" {
 		conditions = append(conditions, fmt.Sprintf("category = $%d", len(params)+1))
@@ -102,18 +104,19 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		baseQuery += " AND " + strings.Join(conditions, " AND ")
 	}
 
-	if offsetQuery != "" {
-		baseQuery += " " + offsetQuery
-	}
-
 	if orderByQuery != "" {
 		baseQuery += " " + orderByQuery
+	}
+
+	if offsetQuery != "" {
+		baseQuery += " " + offsetQuery
 	}
 
 	if limitQuery != "" {
 		baseQuery += " " + limitQuery
 	}
 
+	println("baseQuery: ", baseQuery)
 	rows, err := dbase.DB.Query(baseQuery, params...)
 
 	if err != nil {
