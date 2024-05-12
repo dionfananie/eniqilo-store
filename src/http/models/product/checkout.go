@@ -9,5 +9,5 @@ type ProductCheckoutModel struct {
 
 type ProductCheckoutDetail struct {
 	ProductId string `json:"productId" binding:"required"`
-	Quantity  int    `json:"quantity" binding:"required"`
+	Quantity  int    `json:"quantity" binding:"required,min=1"`
 }
