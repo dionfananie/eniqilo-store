@@ -44,7 +44,7 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 
 		_, err := uuid.Parse(detail.ProductId)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Wrong product id"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong product id"})
 			return
 		}
 
@@ -120,7 +120,7 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Paid not enough"})
 		return
 	}
-	if req.Change != req.Paid-productTotalPrice || req.Change < 0 {
+	if *req.Change != req.Paid-productTotalPrice || *req.Change < 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Change is wrong"})
 		return
 	}
