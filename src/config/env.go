@@ -25,15 +25,10 @@ var (
 )
 
 func loadEnv() {
-	// if !isEnvLoaded {
-	// 	viper.AutomaticEnv()
-	// 	isEnvLoaded = true
-	// }
-
 	if !isEnvLoaded {
 		err := godotenv.Load()
 		if err != nil {
-			log.Fatal("Error loading .env file")
+			fmt.Println(".env file is not found, using env from os...")
 		}
 		isEnvLoaded = true
 	}
