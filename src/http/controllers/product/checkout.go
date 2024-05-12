@@ -37,6 +37,11 @@ func (dbase *V1Product) ProductCheckout(c *gin.Context) {
 
 	productIds := make([]string, len(req.ProductDetails))
 	for i, detail := range req.ProductDetails {
+		if string(detail.ProductId) == "null" || detail.ProductId == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong product id"})
+			return
+		}
+
 		_, err := uuid.Parse(detail.ProductId)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Wrong product id"})
