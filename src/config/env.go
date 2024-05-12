@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
 var isEnvLoaded = false
@@ -15,7 +15,7 @@ var (
 	DB_NAME     = getEnv("DB_NAME", "")
 	DB_PORT     = getEnv("DB_PORT", "")
 	DB_HOST     = getEnv("DB_HOST", "")
-	DB_USERNAME = getEnv("DB_USERNAME", "")
+	DB_USERNAME = getEnv("DB_USER", "")
 	DB_PASSWORD = getEnv("DB_PASSWORD", "")
 	DB_PARAMS   = getEnv("DB_PARAMS", "sslmode=disable")
 
@@ -26,17 +26,14 @@ var (
 
 func loadEnv() {
 	if !isEnvLoaded {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatal("Error loading .env file")
-		}
+		viper.AutomaticEnv()
 		isEnvLoaded = true
 	}
 }
 
 func getEnv(name string, fallback string) string {
 	loadEnv()
-	if value, exists := os.LookupEnv(name); exists {
+	if value := os.Getenv(name); value != "" {
 		return value
 	}
 
@@ -49,7 +46,7 @@ func getEnv(name string, fallback string) string {
 
 func getEnvAsInt(name string, fallback int) int {
 	loadEnv()
-	if value, exists := os.LookupEnv(name); exists {
+	if value := os.Getenv(name); value != "" {
 		intValue, err := strconv.Atoi(value)
 		if err != nil {
 			log.Fatalf("Error converting %v to int", name)

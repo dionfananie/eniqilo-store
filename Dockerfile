@@ -1,29 +1,28 @@
-# syntax=docker/dockerfile:1
+FROM golang:1.22.3-alpine3.19 AS builder
 
-FROM golang:1.18
-
-
-ENV GO111MODULE=on
-# Set destination for COPY
 WORKDIR /app
 
+COPY . . 
 
+ENV GOARCH=amd64
+ENV GOOS=linux 
 
-# Download Go modules
-COPY . .
+RUN go build -o main .
 
-RUN go mod download
+FROM alpine
+WORKDIR /app
 
+COPY --from=builder /app/main .
 
-# Build
-RUN CGO_ENABLED=0  GOOS=linux go build -o main
-
-# Optional:
-# To bind to a TCP port, runtime parameters must be supplied to the docker command.
-# But we can document in the Dockerfile what ports
-# the application is going to listen on by default.
-# https://docs.docker.com/reference/dockerfile/#expose
 EXPOSE 8080
 
-# Run
-CMD ["./main"]
+ENV DB_HOST=localhost
+ENV DB_PORT=5432
+ENV DB_USER=postgres
+ENV DB_PASSWORD=secret
+ENV DB_NAME=mydb
+ENV DB_PARAMS=sslmode=disable
+ENV JWT_SECRET=secretly
+ENV BCRYPT_SALT=8
+
+CMD ["/app/main"]
