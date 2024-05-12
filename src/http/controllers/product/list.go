@@ -30,15 +30,16 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 
 	if isAvailable := c.Query("isAvailable"); isAvailable != "" {
 		availableQuery := fmt.Sprintf("is_available = $%d", len(params)+1)
-		if isCustomer {
-			availableQuery = "is_available = true"
-			params = append(params, true)
-		} else {
-			params = append(params, isAvailable)
-		}
+		params = append(params, isAvailable)
 		conditions = append(conditions, availableQuery)
 
 	}
+
+	if isCustomer {
+		availableQuery := "is_available = true"
+		conditions = append(conditions, availableQuery)
+	}
+
 	if category := c.Query("category"); category != "" {
 		conditions = append(conditions, fmt.Sprintf("category = $%d", len(params)+1))
 		params = append(params, category)
