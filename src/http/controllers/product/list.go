@@ -34,7 +34,7 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 		conditions = append(conditions, availableQuery)
 
 	}
-
+	// println("is_available: ", c.Query("isAvailable"))
 	if isCustomer {
 		availableQuery := "is_available = true"
 		conditions = append(conditions, availableQuery)
@@ -115,7 +115,7 @@ func (dbase *V1Product) ProductList(c *gin.Context) {
 	if limitQuery != "" {
 		baseQuery += " " + limitQuery
 	}
-
+	println(baseQuery)
 	rows, err := dbase.DB.Query(baseQuery, params...)
 
 	if err != nil {

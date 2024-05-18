@@ -10,6 +10,6 @@ type ProductListModel struct {
 	Price       int64  `json:"price"`
 	Stock       int64  `json:"stock"`
 	Location    string `json:"location"`
-	IsAvailable bool   `json:"isAvailable"`
+	IsAvailable *bool  `json:"isAvailable"`
 	CreatedAt   string `json:"createdAt"`
 }
