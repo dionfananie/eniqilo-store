@@ -27,3 +27,6 @@ go run main.go
 
 Specification App
 https://www.notion.so/dionfananie/EniQilo-Store-e433f5c9cbb64c638c2afefae930e999
+
+Test K6
+https://github.com/dionfananie/EniQiloStoreTestCasesPSW2B2
